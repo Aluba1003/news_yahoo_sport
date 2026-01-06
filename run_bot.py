@@ -136,12 +136,14 @@ def main():
             prev_title = pushed_records.get(link)
             short_link = shorten_url(link)  # 嘗試 is.gd 短網址
 
-            if prev_title is None:
+            title_exists = title in pushed_records.values()
+
+            if prev_title is None and not title_exists:
                 pushed_records[link] = title
                 message = f"{src}\n{title}\n{short_link}"
                 send_telegram(message, delay)
                 save_pushed_records(pushed_records)
-            elif prev_title != title:
+            elif prev_title != title and not title_exists:
                 pushed_records[link] = title
                 message = f"{src}\n{title}\n{short_link}"
                 send_telegram(message, delay)
