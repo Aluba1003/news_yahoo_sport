@@ -42,10 +42,13 @@ pushed_records = load_pushed_records()
 def shorten_url(url: str) -> str:
     try:
         resp = requests.get(f"https://is.gd/create.php?url={url}&format=simple", timeout=5)
-        if resp.status_code == 200 and resp.text.strip():
-            return resp.text.strip()
+        result = resp.text.strip()
+        
+        # 檢查狀態碼為 200，且回傳內容確實是 http 開頭的網址
+        if resp.status_code == 200 and result.startswith("http"):
+            return result
         else:
-            print(f"❌ is.gd 失敗，使用原始網址")
+            print(f"❌ is.gd 失敗 (回應: {result})，使用原始網址")
             return url
     except Exception as e:
         print(f"❌ is.gd 錯誤: {e}，使用原始網址")
@@ -136,14 +139,12 @@ def main():
             prev_title = pushed_records.get(link)
             short_link = shorten_url(link)  # 嘗試 is.gd 短網址
 
-            title_exists = title in pushed_records.values()
-
-            if prev_title is None and not title_exists:
+            if prev_title is None:
                 pushed_records[link] = title
                 message = f"{src}\n{title}\n{short_link}"
                 send_telegram(message, delay)
                 save_pushed_records(pushed_records)
-            elif prev_title != title and not title_exists:
+            elif prev_title != title:
                 pushed_records[link] = title
                 message = f"{src}\n{title}\n{short_link}"
                 send_telegram(message, delay)
