@@ -13,7 +13,7 @@ TELEGRAM_TOKEN = os.getenv("TELEGRAM_TOKEN")
 CHAT_ID = os.getenv("CHAT_ID")
 
 PUSHED_FILE = "pushed.json"
-MAX_RECORDS = 1000  # 限制最多保留 1000 筆紀錄
+MAX_RECORDS = 30000  # 限制最多保留 30000 筆紀錄
 
 # 載入已推播紀錄
 def load_pushed_records():
